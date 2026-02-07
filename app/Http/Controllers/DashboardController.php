@@ -35,14 +35,23 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get();
-            
+        
+        // ✅ CORRECCIÓN: Obtener wallet con valor por defecto si es null
+        $wallet = $user->wallet ?? 0;
+        
+        // ✅ CORRECCIÓN: Verificar que las relaciones no sean null
+        $totalExpenses = $user->expenses()->whereMonth('created_at', now()->month)->sum('amount') ?? 0;
+        $totalIncomes = $user->incomes()->where('paid_at', '!=', null)->whereMonth('paid_at', now()->month)->sum('amount') ?? 0;
+        
         return view('dashboard', [
-            'wallet' => $user->wallet,
+            'wallet' => $wallet, // ✅ Usar variable corregida
             'fixedExpenses' => $fixedExpenses,
             'incomes' => $incomes,
             'categories' => $categories,
             'expenses' => $expenses,
             'currentMonth' => $currentMonth,
+            'totalExpenses' => $totalExpenses, // ✅ Valor por defecto
+            'totalIncomes' => $totalIncomes,   // ✅ Valor por defecto
         ]);
     }
 
@@ -54,19 +63,19 @@ class DashboardController extends Controller
         $data = [
             'totalExpenses' => $user->expenses()
                 ->whereMonth('created_at', now()->month)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
             'totalIncomes' => $user->incomes()
                 ->where('paid_at', '!=', null)
                 ->whereMonth('paid_at', now()->month)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
             'fixedExpensesPaid' => $user->fixedExpenses()
                 ->where('month', $currentMonth)
                 ->where('paid_at', '!=', null)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
             'fixedExpensesPending' => $user->fixedExpenses()
                 ->where('month', $currentMonth)
                 ->where('paid_at', null)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
         ];
         
         return response()->json($data);
@@ -102,11 +111,11 @@ class DashboardController extends Controller
                     ->where('paid_at', '!=', null)
                     ->whereMonth('paid_at', $month->month)
                     ->whereYear('paid_at', $month->year)
-                    ->sum('amount'),
+                    ->sum('amount') ?? 0, // ✅ Valor por defecto
                 'expense' => $user->expenses()
                     ->whereMonth('created_at', $month->month)
                     ->whereYear('created_at', $month->year)
-                    ->sum('amount'),
+                    ->sum('amount') ?? 0, // ✅ Valor por defecto
             ];
         }
         
@@ -119,17 +128,17 @@ class DashboardController extends Controller
         $currentMonth = now()->format('Y-m');
         
         $stats = [
-            'wallet' => $user->wallet,
+            'wallet' => $user->wallet ?? 0, // ✅ CORRECCIÓN: Valor por defecto
             'pendingIncomes' => $user->incomes()
                 ->where('paid_at', null)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
             'pendingFixedExpenses' => $user->fixedExpenses()
                 ->where('month', $currentMonth)
                 ->where('paid_at', null)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
             'monthlyExpenses' => $user->expenses()
                 ->whereMonth('created_at', now()->month)
-                ->sum('amount'),
+                ->sum('amount') ?? 0, // ✅ Valor por defecto
         ];
         
         return response()->json($stats);
