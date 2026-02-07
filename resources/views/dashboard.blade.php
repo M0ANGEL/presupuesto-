@@ -14,6 +14,13 @@
                     <a href="{{ route('settings.index') }}" class="text-gray-500 hover:text-gray-700" title="Configuración">
                         <i class="fas fa-cog text-xl"></i>
                     </a>
+                    {{-- Botón de Cerrar Sesión --}}
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-gray-500 hover:text-red-600" title="Cerrar Sesión">
+                            <i class="fas fa-sign-out-alt text-xl"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -351,18 +358,27 @@
     </div>
 
     {{-- Floating Action Button para móvil --}}
-    <div class="md:hidden fixed bottom-24 right-4 z-30">
-        <div id="fabMenu" class="absolute bottom-16 right-0 space-y-2 hidden">
+    <div class="md:hidden bg-black fixed bottom-24 rounded-full right-4 z-30">
+        <div id="fabMenu" class="absolute  bottom-16 right-0 space-y-2 hidden flex-col items-end">
+            {{-- Botón de cerrar (X) en color negro --}}
+            <button onclick="closeFABMenu()"
+                    class="w-14 h-14 bg-black rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110 mb-2">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            
             <a href="{{ route('incomes.create') }}"
-               class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110">
+               class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
+               title="Agregar Ingreso">
                 <i class="fas fa-plus-circle text-lg"></i>
             </a>
             <a href="{{ route('expenses.create') }}"
-               class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110">
+               class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
+               title="Agregar Gasto">
                 <i class="fas fa-minus-circle text-lg"></i>
             </a>
             <a href="{{ route('fixed-expenses.create') }}"
-               class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110">
+               class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
+               title="Agregar Gasto Fijo">
                 <i class="fas fa-calendar-plus text-lg"></i>
             </a>
         </div>
@@ -376,16 +392,24 @@
     <script>
         function openFABMenu() {
             const menu = document.getElementById('fabMenu');
-            menu.classList.toggle('hidden');
+            menu.classList.remove('hidden');
+            menu.classList.add('flex');
+        }
+        
+        function closeFABMenu() {
+            const menu = document.getElementById('fabMenu');
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
         }
 
         // Cerrar FAB al hacer clic fuera
         document.addEventListener('click', function(e) {
             const fabMenu = document.getElementById('fabMenu');
             const fabButton = document.querySelector('button[onclick="openFABMenu()"]');
+            const closeButton = document.querySelector('button[onclick="closeFABMenu()"]');
             
-            if (!fabMenu.contains(e.target) && e.target !== fabButton && !fabButton.contains(e.target)) {
-                fabMenu.classList.add('hidden');
+            if (!fabMenu.contains(e.target) && e.target !== fabButton && !fabButton.contains(e.target) && e.target !== closeButton && !closeButton.contains(e.target)) {
+                closeFABMenu();
             }
         });
     </script>

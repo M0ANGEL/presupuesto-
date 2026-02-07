@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-gray-50 to-white p-4">
+    <div class="max-w-md mx-auto min-h-screen bg-gradient-to-b from-gray-50 to-white p-4 pb-24">
         <!-- Header con navegación -->
         <div class="flex items-center justify-between mb-6 pt-4">
             <a href="{{ route('dashboard') }}" class="text-gray-600">
@@ -81,7 +81,7 @@
 
             <!-- Botón de envío -->
             <button type="button" onclick="submitExpenseForm()" 
-                    class="fixed bottom-6 left-4 right-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0">
+                    class="w-full mt-8 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 md:fixed md:bottom-6 md:left-4 md:right-4 md:w-auto">
                 <i class="fas fa-check-circle mr-2"></i>Registrar Gasto
             </button>
         </form>
@@ -167,6 +167,22 @@
                     amountInput.focus();
                 }, 300);
             }
+            
+            // Ajustar botón en móvil cuando aparece teclado
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    const button = document.querySelector('button[type="button"]');
+                    button.classList.add('md:fixed');
+                });
+                
+                input.addEventListener('blur', function() {
+                    const button = document.querySelector('button[type="button"]');
+                    setTimeout(() => {
+                        button.classList.add('md:fixed');
+                    }, 300);
+                });
+            });
         });
     </script>
 </x-app-layout>
