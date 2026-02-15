@@ -26,7 +26,7 @@ class TransactionController extends Controller
         }
         
         // Obtener transacciones paginadas
-        $transactions = $query->latest()->paginate(20);
+        $transactions = $query->latest()->paginate(100);
         
         // Calcular totales
         $totalIncome = $transactions->where('type', 'income')->sum('amount');
